@@ -261,6 +261,39 @@ FORM_HTML = """<!DOCTYPE html>
     color: rgba(255,255,255,0.6);
     font-size: 0.85rem;
   }
+
+  .field-error {
+    color: #e53e3e;
+    font-size: 0.82rem;
+    margin-top: 0.3rem;
+    display: none;
+  }
+
+  .field-error.visible { display: block; }
+
+  .field.has-error input,
+  .field.has-error textarea,
+  .field.has-error select {
+    border-color: #e53e3e;
+  }
+
+  .field.has-error input:focus,
+  .field.has-error textarea:focus,
+  .field.has-error select:focus {
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15);
+  }
+
+  .field.valid input,
+  .field.valid textarea,
+  .field.valid select {
+    border-color: #38a169;
+  }
+
+  .field.valid input:focus,
+  .field.valid textarea:focus,
+  .field.valid select:focus {
+    box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.15);
+  }
 </style>
 </head>
 <body>
@@ -278,55 +311,63 @@ FORM_HTML = """<!DOCTYPE html>
   <div class="card">
     <h2>Tell us your basics</h2>
 
-    <div class="field">
+    <div class="field" id="field-name">
       <label class="field-label required" for="name">What's your name?</label>
       <input type="text" id="name" name="name" placeholder="Type your answer here..." required minlength="2" maxlength="50" value="{{name}}">
+      <p class="field-error" id="err-name"></p>
     </div>
 
-    <div class="field">
+    <div class="field" id="field-birthday">
       <label class="field-label required" for="birthday">When is your birthday?</label>
       <p class="helper">Only your age will be shown to others</p>
       <input type="date" id="birthday" name="birthday" required max="2008-04-08" value="{{birthday}}">
+      <p class="field-error" id="err-birthday"></p>
     </div>
 
-    <div class="field">
+    <div class="field" id="field-gender">
       <label class="field-label required">What's your gender?</label>
       <div class="radio-group">
         <label><input type="radio" name="gender" value="Female" {{gender_Female}}><span>Female</span></label>
         <label><input type="radio" name="gender" value="Male" {{gender_Male}}><span>Male</span></label>
         <label><input type="radio" name="gender" value="Nonbinary" {{gender_Nonbinary}}><span>Nonbinary</span></label>
       </div>
+      <p class="field-error" id="err-gender"></p>
     </div>
 
-    <div class="field">
+    <div class="field" id="field-ethnicity">
       <label class="field-label required">What's your ethnicity? (Select all that apply)</label>
       <div class="checkbox-group">
         {{ethnicity_checkboxes}}
       </div>
+      <p class="field-error" id="err-ethnicity"></p>
     </div>
 
-    <div class="field">
+    <div class="field" id="field-height">
       <label class="field-label required" for="height">How tall are you? (cm)</label>
       <input type="number" id="height" name="height" placeholder="e.g. 170" required min="70" max="300" value="{{height}}">
+      <p class="field-error" id="err-height"></p>
     </div>
 
-    <div class="field">
+    <div class="field" id="field-hobbies">
       <label class="field-label required" for="hobbies">Share your hobbies and interests</label>
       <textarea id="hobbies" name="hobbies" placeholder="e.g. reading, music, hiking, cooking..." required>{{hobbies}}</textarea>
+      <p class="field-error" id="err-hobbies"></p>
     </div>
 
-    <div class="field">
+    <div class="field" id="field-year">
       <label class="field-label required" for="year">What year are you in?</label>
       <select id="year" name="year" required>
         <option value="" disabled {{year_default}}>Select your year</option>
         {{year_options}}
       </select>
+      <p class="field-error" id="err-year"></p>
     </div>
 
-    <div class="field">
+    <div class="field" id="field-match_intro">
       <label class="field-label required" for="match_intro">What's the first thing you'd want your match to know about you?</label>
       <p class="helper">They'll see it when they're matched with you.</p>
       <textarea id="match_intro" name="match_intro" placeholder="Could be a fun fact, a vibe check, anything really" required>{{match_intro}}</textarea>
+      <p class="field-error" id="err-match_intro"></p>
     </div>
   </div>
 
@@ -334,36 +375,41 @@ FORM_HTML = """<!DOCTYPE html>
   <div class="card">
     <h2>Tell us your type</h2>
 
-    <div class="field">
+    <div class="field" id="field-looking_for">
       <label class="field-label required">What are you looking for right now? (Select all that apply)</label>
       <div class="checkbox-group">
         {{looking_for_checkboxes}}
       </div>
+      <p class="field-error" id="err-looking_for"></p>
     </div>
 
-    <div class="field">
+    <div class="field" id="field-date_who">
       <label class="field-label required">Who do you wanna date? (Select all who you're open to meeting)</label>
       <div class="checkbox-group">
         {{date_who_checkboxes}}
       </div>
+      <p class="field-error" id="err-date_who"></p>
     </div>
 
     <div class="age-row">
-      <div class="field">
+      <div class="field" id="field-min_age">
         <label class="field-label required" for="min_age">Minimum age you'd like to date</label>
         <input type="number" id="min_age" name="min_age" placeholder="e.g. 18" required min="18" max="99" value="{{min_age}}">
+        <p class="field-error" id="err-min_age"></p>
       </div>
-      <div class="field">
+      <div class="field" id="field-max_age">
         <label class="field-label required" for="max_age">Maximum age you'd like to date</label>
         <input type="number" id="max_age" name="max_age" placeholder="e.g. 30" required min="18" max="99" value="{{max_age}}">
+        <p class="field-error" id="err-max_age"></p>
       </div>
     </div>
 
-    <div class="field">
+    <div class="field" id="field-attracted_ethnicity">
       <label class="field-label required">What ethnicities are you attracted to? (Select all that apply)</label>
       <div class="checkbox-group">
         {{attracted_ethnicity_checkboxes}}
       </div>
+      <p class="field-error" id="err-attracted_ethnicity"></p>
     </div>
 
     <div class="field">
@@ -386,10 +432,11 @@ FORM_HTML = """<!DOCTYPE html>
   <div class="card">
     <h2>Show us your vibe</h2>
 
-    <div class="field">
+    <div class="field" id="field-photos">
       <label class="field-label required" for="photos">Upload your photos</label>
       <p class="helper">Add up to 3 pics that show your face and vibe. Clear face photos from different moments help find better matches for you. (Max 10 MB each)</p>
       <input type="file" id="photos" name="photos" accept="image/*" multiple required>
+      <p class="field-error" id="err-photos"></p>
     </div>
   </div>
 
@@ -401,64 +448,204 @@ FORM_HTML = """<!DOCTYPE html>
 </div>
 
 <script>
-document.getElementById('mainForm').addEventListener('submit', function(e) {
-  const errors = [];
-  const name = document.getElementById('name').value.trim();
-  if (name.length < 2 || name.length > 50) errors.push('Name must be 2-50 characters.');
+(function() {
+  function showError(fieldId, msg) {
+    const field = document.getElementById('field-' + fieldId);
+    const err = document.getElementById('err-' + fieldId);
+    if (!field || !err) return;
+    field.classList.add('has-error');
+    field.classList.remove('valid');
+    err.textContent = msg;
+    err.classList.add('visible');
+  }
 
-  const bday = document.getElementById('birthday').value;
-  if (!bday) { errors.push('Birthday is required.'); }
-  else if (bday > '2008-04-08') { errors.push('You must be at least 18 years old.'); }
+  function clearError(fieldId) {
+    const field = document.getElementById('field-' + fieldId);
+    const err = document.getElementById('err-' + fieldId);
+    if (!field || !err) return;
+    field.classList.remove('has-error');
+    field.classList.add('valid');
+    err.textContent = '';
+    err.classList.remove('visible');
+  }
 
-  const gender = document.querySelector('input[name="gender"]:checked');
-  if (!gender) errors.push('Please select your gender.');
+  function clearNeutral(fieldId) {
+    const field = document.getElementById('field-' + fieldId);
+    const err = document.getElementById('err-' + fieldId);
+    if (!field || !err) return;
+    field.classList.remove('has-error', 'valid');
+    err.textContent = '';
+    err.classList.remove('visible');
+  }
 
-  const ethChecked = document.querySelectorAll('input[name="ethnicity"]:checked');
-  if (ethChecked.length === 0) errors.push('Please select at least one ethnicity.');
+  // --- Name ---
+  document.getElementById('name').addEventListener('input', function() {
+    const v = this.value.trim();
+    if (v.length === 0) clearNeutral('name');
+    else if (v.length < 2) showError('name', 'Name must be at least 2 characters.');
+    else if (v.length > 50) showError('name', 'Name must be under 50 characters.');
+    else clearError('name');
+  });
 
-  const height = parseInt(document.getElementById('height').value);
-  if (isNaN(height) || height < 70 || height > 300) errors.push('Height must be between 70 and 300 cm.');
+  // --- Birthday ---
+  document.getElementById('birthday').addEventListener('change', function() {
+    const v = this.value;
+    if (!v) clearNeutral('birthday');
+    else if (v > '2008-04-08') showError('birthday', 'You must be at least 18 years old.');
+    else clearError('birthday');
+  });
 
-  if (!document.getElementById('hobbies').value.trim()) errors.push('Hobbies are required.');
-  if (!document.getElementById('year').value) errors.push('Please select your year.');
-  if (!document.getElementById('match_intro').value.trim()) errors.push('Match intro is required.');
+  // --- Gender ---
+  document.querySelectorAll('input[name="gender"]').forEach(function(r) {
+    r.addEventListener('change', function() { clearError('gender'); });
+  });
 
-  const lookingChecked = document.querySelectorAll('input[name="looking_for"]:checked');
-  if (lookingChecked.length === 0) errors.push('Please select what you are looking for.');
+  // --- Ethnicity ---
+  document.querySelectorAll('input[name="ethnicity"]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      const checked = document.querySelectorAll('input[name="ethnicity"]:checked');
+      if (checked.length > 0) clearError('ethnicity');
+      else showError('ethnicity', 'Please select at least one ethnicity.');
+    });
+  });
 
-  const dateChecked = document.querySelectorAll('input[name="date_who"]:checked');
-  if (dateChecked.length === 0) errors.push('Please select who you want to date.');
+  // --- Height ---
+  document.getElementById('height').addEventListener('input', function() {
+    const v = this.value;
+    if (v === '') { clearNeutral('height'); return; }
+    const n = parseInt(v);
+    if (isNaN(n)) showError('height', 'Please enter a valid number.');
+    else if (n < 70) showError('height', 'Height must be at least 70 cm.');
+    else if (n > 300) showError('height', 'Height must be under 300 cm.');
+    else clearError('height');
+  });
 
-  const minAge = parseInt(document.getElementById('min_age').value);
-  const maxAge = parseInt(document.getElementById('max_age').value);
-  if (isNaN(minAge) || minAge < 18 || minAge > 99) errors.push('Min age must be 18-99.');
-  if (isNaN(maxAge) || maxAge < 18 || maxAge > 99) errors.push('Max age must be 18-99.');
-  if (!isNaN(minAge) && !isNaN(maxAge) && minAge > maxAge) errors.push('Min age cannot be greater than max age.');
+  // --- Hobbies ---
+  document.getElementById('hobbies').addEventListener('input', function() {
+    if (this.value.trim()) clearError('hobbies');
+    else clearNeutral('hobbies');
+  });
 
-  const attrEthChecked = document.querySelectorAll('input[name="attracted_ethnicity"]:checked');
-  if (attrEthChecked.length === 0) errors.push('Please select at least one attracted ethnicity.');
+  // --- Year ---
+  document.getElementById('year').addEventListener('change', function() {
+    if (this.value) clearError('year');
+    else clearNeutral('year');
+  });
 
-  const files = document.getElementById('photos').files;
-  if (files.length === 0) errors.push('Please upload at least 1 photo.');
-  if (files.length > 3) errors.push('Maximum 3 photos allowed.');
-  for (let i = 0; i < files.length; i++) {
-    if (files[i].size > 10 * 1024 * 1024) {
-      errors.push('Each photo must be under 10 MB.');
-      break;
+  // --- Match intro ---
+  document.getElementById('match_intro').addEventListener('input', function() {
+    if (this.value.trim()) clearError('match_intro');
+    else clearNeutral('match_intro');
+  });
+
+  // --- Looking for ---
+  document.querySelectorAll('input[name="looking_for"]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      const checked = document.querySelectorAll('input[name="looking_for"]:checked');
+      if (checked.length > 0) clearError('looking_for');
+      else showError('looking_for', 'Please select at least one option.');
+    });
+  });
+
+  // --- Date who ---
+  document.querySelectorAll('input[name="date_who"]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      const checked = document.querySelectorAll('input[name="date_who"]:checked');
+      if (checked.length > 0) clearError('date_who');
+      else showError('date_who', 'Please select at least one option.');
+    });
+  });
+
+  // --- Min/Max age (cross-validated) ---
+  function validateAges() {
+    const minV = document.getElementById('min_age').value;
+    const maxV = document.getElementById('max_age').value;
+    const minN = parseInt(minV);
+    const maxN = parseInt(maxV);
+
+    if (minV === '') clearNeutral('min_age');
+    else if (isNaN(minN) || minN < 18) showError('min_age', 'Must be at least 18.');
+    else if (minN > 99) showError('min_age', 'Must be 99 or under.');
+    else clearError('min_age');
+
+    if (maxV === '') clearNeutral('max_age');
+    else if (isNaN(maxN) || maxN < 18) showError('max_age', 'Must be at least 18.');
+    else if (maxN > 99) showError('max_age', 'Must be 99 or under.');
+    else if (!isNaN(minN) && minN >= 18 && minN <= 99 && maxN < minN) showError('max_age', 'Must be greater than or equal to min age.');
+    else clearError('max_age');
+  }
+  document.getElementById('min_age').addEventListener('input', validateAges);
+  document.getElementById('max_age').addEventListener('input', validateAges);
+
+  // --- Attracted ethnicity ---
+  document.querySelectorAll('input[name="attracted_ethnicity"]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      const checked = document.querySelectorAll('input[name="attracted_ethnicity"]:checked');
+      if (checked.length > 0) clearError('attracted_ethnicity');
+      else showError('attracted_ethnicity', 'Please select at least one option.');
+    });
+  });
+
+  // --- Photos ---
+  document.getElementById('photos').addEventListener('change', function() {
+    const files = this.files;
+    if (files.length === 0) { clearNeutral('photos'); return; }
+    if (files.length > 3) { showError('photos', 'Maximum 3 photos allowed.'); return; }
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].size > 10 * 1024 * 1024) {
+        showError('photos', 'Each photo must be under 10 MB (' + files[i].name + ' is too large).');
+        return;
+      }
     }
-  }
+    clearError('photos');
+  });
 
-  if (errors.length > 0) {
-    e.preventDefault();
-    let html = '<div class="error-banner"><strong>Please fix the following:</strong><ul>';
-    errors.forEach(err => html += '<li>' + err + '</li>');
-    html += '</ul></div>';
-    const existing = document.querySelector('.error-banner');
-    if (existing) existing.remove();
-    document.querySelector('form').insertAdjacentHTML('beforebegin', html);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-});
+  // --- Submit: final check for untouched fields ---
+  document.getElementById('mainForm').addEventListener('submit', function(e) {
+    let hasError = false;
+
+    function check(fieldId, condition, msg) {
+      if (condition) { showError(fieldId, msg); hasError = true; }
+    }
+
+    const name = document.getElementById('name').value.trim();
+    check('name', name.length < 2, 'Name must be at least 2 characters.');
+
+    check('birthday', !document.getElementById('birthday').value, 'Birthday is required.');
+    check('birthday', document.getElementById('birthday').value > '2008-04-08', 'You must be at least 18 years old.');
+
+    check('gender', !document.querySelector('input[name="gender"]:checked'), 'Please select your gender.');
+    check('ethnicity', document.querySelectorAll('input[name="ethnicity"]:checked').length === 0, 'Please select at least one ethnicity.');
+
+    const h = parseInt(document.getElementById('height').value);
+    check('height', isNaN(h) || h < 70 || h > 300, 'Height must be between 70 and 300 cm.');
+
+    check('hobbies', !document.getElementById('hobbies').value.trim(), 'Hobbies are required.');
+    check('year', !document.getElementById('year').value, 'Please select your year.');
+    check('match_intro', !document.getElementById('match_intro').value.trim(), 'Match intro is required.');
+
+    check('looking_for', document.querySelectorAll('input[name="looking_for"]:checked').length === 0, 'Please select at least one option.');
+    check('date_who', document.querySelectorAll('input[name="date_who"]:checked').length === 0, 'Please select at least one option.');
+
+    const minAge = parseInt(document.getElementById('min_age').value);
+    const maxAge = parseInt(document.getElementById('max_age').value);
+    check('min_age', isNaN(minAge) || minAge < 18 || minAge > 99, 'Must be between 18 and 99.');
+    check('max_age', isNaN(maxAge) || maxAge < 18 || maxAge > 99, 'Must be between 18 and 99.');
+    if (!isNaN(minAge) && !isNaN(maxAge) && maxAge < minAge) { showError('max_age', 'Must be >= min age.'); hasError = true; }
+
+    check('attracted_ethnicity', document.querySelectorAll('input[name="attracted_ethnicity"]:checked').length === 0, 'Please select at least one option.');
+
+    const files = document.getElementById('photos').files;
+    check('photos', files.length === 0, 'Please upload at least 1 photo.');
+    if (files.length > 3) { showError('photos', 'Maximum 3 photos.'); hasError = true; }
+
+    if (hasError) {
+      e.preventDefault();
+      const firstErr = document.querySelector('.has-error');
+      if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+})();
 </script>
 </body>
 </html>"""
