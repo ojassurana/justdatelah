@@ -76,3 +76,21 @@ Key notes:
 - After `browser open`, note the `surface=surface:N` in the output and use it for subsequent commands
 - Use `snapshot` to get element refs, then interact using those refs
 - File inputs cannot be filled programmatically (browser security); test file uploads via curl instead
+
+
+## Architecture
+
+This is a split deployment:
+- Frontend: Next.js hosted on Vercel
+- Backend: FastAPI hosted on [your provider]
+
+### API Configuration
+- All frontend API calls MUST use the `NEXT_PUBLIC_API_URL` environment variable, never hardcoded URLs
+- Never use relative `/api` paths for backend calls — those are Vercel serverless functions, not our backend
+- Backend must have CORS middleware allowing the Vercel frontend origin
+- When adding new API endpoints on the backend, always add the corresponding frontend fetch using `NEXT_PUBLIC_API_URL`
+
+### Environment Variables
+- `.env.local` for local dev: `NEXT_PUBLIC_API_URL=http://localhost:8000`
+- Vercel production: `NEXT_PUBLIC_API_URL=https://api.yourdomain.com`
+- Never commit `.env.local`
