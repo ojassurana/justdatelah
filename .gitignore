@@ -5,3 +5,6 @@ __pycache__/
 .env.local
 .claude/
 .vercel
+node_modules/
+.next/
+frontend/.env.local
