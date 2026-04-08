@@ -31,3 +31,15 @@
 - If push fails due to remote changes, pull with `git pull --rebase` first, resolve any conflicts, then push again
 - Never commit secrets, .env files, or API keys
 - Never run destructive database commands without asking
+
+
+## Web Design Verification — SELF-TEST RULE
+
+After making any web-facing change (UI, templates, styles, layouts, routes that render pages), you MUST verify it yourself using the browser tool before considering the task done:
+
+- Start the dev server if it isn't already running
+- Use the browser to navigate to the affected page(s)
+- Visually confirm the change renders correctly — check layout, styling, content, and responsiveness
+- If something looks off, debug and fix it immediately, then re-check
+- Do NOT ask the user to verify unless you've already confirmed it looks correct yourself
+- This applies to all frontend work: new pages, styling tweaks, component changes, form layouts, etc.
