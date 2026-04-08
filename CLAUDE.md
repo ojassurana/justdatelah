@@ -43,3 +43,36 @@ After making any web-facing change (UI, templates, styles, layouts, routes that 
 - If something looks off, debug and fix it immediately, then re-check
 - Do NOT ask the user to verify unless you've already confirmed it looks correct yourself
 - This applies to all frontend work: new pages, styling tweaks, component changes, form layouts, etc.
+
+### How to use CMUX Browser
+
+CMUX is the terminal app running this project. It has a built-in browser for testing web pages.
+
+```bash
+# Open a URL in the browser pane (creates one if needed)
+cmux browser open "http://localhost:8000/form"
+
+# Navigate an existing browser surface to a URL
+cmux browser navigate "http://localhost:8000/form" --surface surface:5
+
+# Take an accessibility-tree snapshot of the page
+cmux browser snapshot --surface surface:5
+cmux browser snapshot --surface surface:5 --compact
+
+# Interact with elements (use ref= IDs from snapshot)
+cmux browser click <ref>  --surface surface:5
+cmux browser fill <ref> "text" --surface surface:5
+cmux browser select <ref> "value" --surface surface:5
+cmux browser check <ref> --surface surface:5
+
+# Evaluate JS in the page
+cmux browser eval "document.querySelector('.error')?.innerText" --surface surface:5
+
+# Add --snapshot-after to any interaction to get updated tree immediately
+cmux browser click <ref> --surface surface:5 --snapshot-after
+```
+
+Key notes:
+- After `browser open`, note the `surface=surface:N` in the output and use it for subsequent commands
+- Use `snapshot` to get element refs, then interact using those refs
+- File inputs cannot be filled programmatically (browser security); test file uploads via curl instead
