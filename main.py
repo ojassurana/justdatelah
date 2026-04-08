@@ -2,11 +2,25 @@ import json
 from datetime import date, datetime
 from typing import Optional
 
+import os
+
 from fastapi import FastAPI, Form, UploadFile, File, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import BaseModel, field_validator, model_validator
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        os.environ.get("FRONTEND_URL", ""),
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 ETHNICITIES = [
     "Chinese", "Malay", "Indian", "Eurasian", "Filipino",
