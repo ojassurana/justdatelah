@@ -80,17 +80,34 @@ Key notes:
 
 ## Architecture
 
-This is a split deployment:
-- Frontend: Next.js hosted on Vercel
-- Backend: FastAPI hosted on [your provider]
+Split deployment: Next.js frontend on Vercel, FastAPI backend hosted separately.
+
+### Project Structure
+- `frontend/` — Next.js app (deployed to Vercel, root directory set in Vercel project settings)
+- `main.py` — FastAPI backend (run locally during dev, deploy to Railway/Render/VPS for prod)
+- `requirements.txt` — Python dependencies for the backend
+
+### Development Setup
+- Frontend: hosted on Vercel (https://justdatelah-eight.vercel.app) — no local frontend server needed
+- Backend: `uvicorn main:app --host 127.0.0.1 --port 8000` on your Mac
+- Vercel env var `NEXT_PUBLIC_API_URL=http://localhost:8000` — the Vercel site calls your local backend
+- Only YOU can use the site during dev (other people's browsers can't reach your localhost)
+
+### Production Setup (future)
+- Frontend: Vercel with custom domain (e.g. justdatelah.com)
+- Backend: Railway/Render/VPS with custom domain (e.g. api.justdatelah.com)
+- Change `NEXT_PUBLIC_API_URL` in Vercel env vars to the public backend URL
+- Set `FRONTEND_URL` env var on backend to the Vercel domain (for CORS)
 
 ### API Configuration
 - All frontend API calls MUST use the `NEXT_PUBLIC_API_URL` environment variable, never hardcoded URLs
 - Never use relative `/api` paths for backend calls — those are Vercel serverless functions, not our backend
 - Backend must have CORS middleware allowing the Vercel frontend origin
 - When adding new API endpoints on the backend, always add the corresponding frontend fetch using `NEXT_PUBLIC_API_URL`
+- Backend API routes are all prefixed with `/api/` (e.g. `/api/submit`, `/api/form-options`)
+- Frontend routes are Next.js pages in `frontend/app/` (e.g. `/form`, `/matches`)
 
 ### Environment Variables
-- `.env.local` for local dev: `NEXT_PUBLIC_API_URL=http://localhost:8000`
-- Vercel production: `NEXT_PUBLIC_API_URL=https://api.yourdomain.com`
+- Vercel (set in dashboard): `NEXT_PUBLIC_API_URL=http://localhost:8000` (dev) or public backend URL (prod)
+- Backend: `FRONTEND_URL` env var for CORS (defaults to allowing `http://localhost:3000`)
 - Never commit `.env.local`
