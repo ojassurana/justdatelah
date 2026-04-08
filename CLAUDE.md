@@ -31,6 +31,7 @@
 - If push fails due to remote changes, pull with `git pull --rebase` first, resolve any conflicts, then push again
 - Never commit secrets, .env files, or API keys
 - Never run destructive database commands without asking
+- After every `git push`, also run `npx vercel@latest deploy --prod --yes` to update the Vercel deployment (GitHub auto-deploy is not connected yet)
 
 
 ## Web Design Verification — SELF-TEST RULE
