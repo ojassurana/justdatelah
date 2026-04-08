@@ -44,12 +44,17 @@ FORM_HTML = """<!DOCTYPE html>
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html, body {
+    overflow-x: hidden;
+  }
+
   body {
     font-family: 'Inter', Helvetica, Arial, sans-serif;
     background: rgb(35, 48, 57);
     min-height: 100vh;
     padding: 0;
     color: #fff;
+    -webkit-text-size-adjust: 100%;
   }
 
   .container {
@@ -85,6 +90,7 @@ FORM_HTML = """<!DOCTYPE html>
     padding: 0;
     margin-bottom: 2rem;
     box-shadow: rgb(1, 30, 44) 0px 0px 3px;
+    overflow: hidden;
   }
 
   .card h2 {
@@ -111,6 +117,8 @@ FORM_HTML = """<!DOCTYPE html>
     font-size: 1rem;
     color: #fff;
     margin-bottom: 0.75rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
   .required::after {
@@ -130,15 +138,17 @@ FORM_HTML = """<!DOCTYPE html>
   textarea,
   select {
     width: 100%;
+    max-width: 100%;
     padding: 0.5rem 0.75rem;
     border: none;
     border-radius: 6px;
-    font-size: 1rem;
+    font-size: 16px;
     font-family: inherit;
     transition: all 0.15s ease;
     background: rgb(35, 48, 57);
     color: #fff;
     height: 40px;
+    -webkit-appearance: none;
   }
 
   input::placeholder, textarea::placeholder {
@@ -340,6 +350,22 @@ FORM_HTML = """<!DOCTYPE html>
   input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(0.6);
   }
+
+  /* Mobile responsiveness */
+  @media (max-width: 380px) {
+    .age-row {
+      flex-direction: column;
+      gap: 0;
+    }
+    .age-row .field {
+      padding: 1rem 0 0;
+    }
+    .radio-group label, .checkbox-group label {
+      padding: 0.6rem 0.75rem;
+      font-size: 0.8rem;
+    }
+  }
+
 
   /* Photo upload grid */
   .photo-grid {
