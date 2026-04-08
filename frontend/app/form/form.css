@@ -1,0 +1,415 @@
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  padding: 2.5rem 0 1.5rem;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.5px;
+}
+
+.header p {
+  color: rgb(114, 130, 141);
+  font-size: 0.95rem;
+}
+
+.card {
+  background: rgba(8, 23, 33, 0.9);
+  border-radius: 24px;
+  padding: 0;
+  margin-bottom: 2rem;
+  box-shadow: rgb(1, 30, 44) 0px 0px 3px;
+  overflow: hidden;
+}
+
+.card h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  padding: 1.25rem 1.25rem 0;
+  margin-bottom: 0.25rem;
+  border-bottom: none;
+}
+
+.field {
+  padding: 1rem 1.25rem 0;
+  margin-bottom: 0;
+}
+
+.field:last-child {
+  padding-bottom: 1.5rem;
+}
+
+.field-label {
+  display: block;
+  font-weight: 400;
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 0.75rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.required::after {
+  content: " *";
+  color: rgb(247, 72, 177);
+}
+
+.helper {
+  font-size: 0.875rem;
+  color: rgb(114, 130, 141);
+  margin-bottom: 0.75rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-family: inherit;
+  transition: all 0.15s ease;
+  background: rgb(35, 48, 57);
+  color: #fff;
+  height: 40px;
+  -webkit-appearance: none;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgb(114, 130, 141);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(247, 72, 177, 0.4);
+  background: rgb(35, 48, 57);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+  height: 120px;
+  padding: 0.5rem 0.75rem;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2372828d' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 2rem;
+}
+
+select option {
+  background: rgb(35, 48, 57);
+  color: #fff;
+}
+
+.radio-group, .checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.radio-group label, .checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1), background 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgb(35, 48, 57);
+  color: rgb(188, 201, 211);
+  user-select: none;
+  height: 44px;
+}
+
+.radio-group label:hover, .checkbox-group label:hover {
+  background: rgb(45, 58, 67);
+}
+
+.radio-group input, .checkbox-group input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.radio-group label.selected,
+.checkbox-group label.selected {
+  background: #fff;
+  color: rgb(247, 72, 177);
+}
+
+.age-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem 0;
+}
+
+.age-row .field {
+  flex: 1;
+  padding: 0;
+}
+
+.age-row .field:last-child {
+  padding-bottom: 0;
+}
+
+.submit-btn {
+  display: block;
+  width: 100%;
+  padding: 0 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  color: rgb(255, 44, 171);
+  border: none;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  height: 48px;
+  letter-spacing: 0.3px;
+  margin-bottom: 2rem;
+}
+
+.submit-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.submit-btn:active { transform: translateY(0); }
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.error-banner {
+  background: rgba(229, 62, 62, 0.15);
+  border: 1px solid rgba(229, 62, 62, 0.3);
+  color: #ff8a8a;
+  padding: 1rem 1.2rem;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.error-banner strong { color: #ff8a8a; }
+.error-banner ul { margin: 0.3rem 0 0 1.2rem; }
+
+.field-error {
+  color: rgb(255, 138, 138);
+  font-size: 0.82rem;
+  margin-top: 0.3rem;
+}
+
+.field.has-error input,
+.field.has-error textarea,
+.field.has-error select {
+  box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.4);
+}
+
+.field.has-error input:focus,
+.field.has-error textarea:focus,
+.field.has-error select:focus {
+  box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.6);
+}
+
+.field.valid input,
+.field.valid textarea,
+.field.valid select {
+  box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.3);
+}
+
+.field.valid input:focus,
+.field.valid textarea:focus,
+.field.valid select:focus {
+  box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.5);
+}
+
+/* Date input color fix */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.6);
+}
+
+/* Photo upload grid */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.photo-slot {
+  aspect-ratio: 1/1;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.photo-slot-add {
+  background: rgb(35, 48, 57);
+  border: 2px dashed rgb(55, 68, 77);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.photo-slot-add:hover, .photo-slot-add:focus {
+  border-color: rgb(114, 130, 141);
+  background: rgb(40, 53, 62);
+  outline: none;
+}
+
+.photo-slot-label {
+  font-size: 0.75rem;
+  color: rgb(114, 130, 141);
+}
+
+.photo-slot-filled {
+  background: rgb(35, 48, 57);
+  border: none;
+}
+
+.photo-slot-filled img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-slot-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+  line-height: 1;
+}
+
+.photo-slot-remove:hover {
+  background: rgba(229, 62, 62, 0.8);
+}
+
+.photo-dropzone {
+  border: 2px dashed rgb(55, 68, 77);
+  border-radius: 16px;
+  padding: 2rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  cursor: pointer;
+}
+
+.photo-dropzone.drag-over {
+  border-color: rgb(247, 72, 177);
+  background: rgba(247, 72, 177, 0.05);
+}
+
+.dropzone-text {
+  color: rgb(188, 201, 211);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dropzone-subtext {
+  color: rgb(114, 130, 141);
+  font-size: 0.8rem;
+}
+
+.footer {
+  text-align: center;
+  padding-bottom: 2rem;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.8rem;
+}
+
+/* Success page */
+.success-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.success-card {
+  background: rgba(8, 23, 33, 0.9);
+  border-radius: 24px;
+  padding: 3rem;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: rgb(1, 30, 44) 0px 0px 3px;
+}
+
+.success-card h1 { color: #fff; margin-bottom: 1rem; }
+.success-card p { color: rgb(114, 130, 141); line-height: 1.6; margin-bottom: 1.5rem; }
+
+.success-card a {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  color: rgb(255, 44, 171);
+  text-decoration: none;
+  border-radius: 9999px;
+  font-weight: 700;
+  transition: opacity 0.2s ease;
+}
+
+.success-card a:hover { opacity: 0.9; }
+
+/* Mobile responsiveness */
+@media (max-width: 380px) {
+  .age-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .age-row .field {
+    padding: 1rem 0 0;
+  }
+  .radio-group label, .checkbox-group label {
+    padding: 0.6rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}

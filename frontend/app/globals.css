@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { overflow-x: hidden; }
+
+body {
+  font-family: 'Inter', Helvetica, Arial, sans-serif;
+  background: rgb(35, 48, 57);
+  min-height: 100vh;
+  padding: 0;
+  color: #fff;
+  -webkit-text-size-adjust: 100%;
+}
+
+html { scroll-behavior: smooth; }
