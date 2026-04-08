@@ -45,77 +45,83 @@ FORM_HTML = """<!DOCTYPE html>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Inter', Helvetica, Arial, sans-serif;
+    background: rgb(35, 48, 57);
     min-height: 100vh;
-    padding: 2rem 1rem;
+    padding: 0;
+    color: #fff;
   }
 
   .container {
-    max-width: 640px;
+    max-width: 480px;
     margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
   }
 
   .header {
     text-align: center;
-    margin-bottom: 2rem;
+    padding: 2.5rem 0 1.5rem;
   }
 
   .header h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 700;
     color: #fff;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
     letter-spacing: -0.5px;
   }
 
   .header p {
-    color: rgba(255,255,255,0.85);
-    font-size: 1.1rem;
+    color: rgb(114, 130, 141);
+    font-size: 0.95rem;
   }
 
   .card {
-    background: #fff;
-    border-radius: 16px;
-    padding: 2rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    background: rgba(8, 23, 33, 0.9);
+    border-radius: 24px;
+    padding: 0;
+    margin-bottom: 2rem;
+    box-shadow: rgb(1, 30, 44) 0px 0px 3px;
   }
 
   .card h2 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #764ba2;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid #f0e6f6;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    padding: 1.25rem 1.25rem 0;
+    margin-bottom: 0.25rem;
+    border-bottom: none;
   }
 
   .field {
-    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem 0;
+    margin-bottom: 0;
   }
 
   .field:last-child {
-    margin-bottom: 0;
+    padding-bottom: 1.5rem;
   }
 
   label.field-label {
     display: block;
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: #333;
-    margin-bottom: 0.4rem;
+    font-weight: 400;
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 0.75rem;
   }
 
   .required::after {
     content: " *";
-    color: #e53e3e;
+    color: rgb(247, 72, 177);
   }
 
   .helper {
-    font-size: 0.82rem;
-    color: #888;
-    margin-bottom: 0.4rem;
+    font-size: 0.875rem;
+    color: rgb(114, 130, 141);
+    margin-bottom: 0.75rem;
   }
 
   input[type="text"],
@@ -124,116 +130,146 @@ FORM_HTML = """<!DOCTYPE html>
   textarea,
   select {
     width: 100%;
-    padding: 0.7rem 0.9rem;
-    border: 1.5px solid #ddd;
-    border-radius: 10px;
-    font-size: 0.95rem;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
     font-family: inherit;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    background: #fafafa;
+    transition: all 0.15s ease;
+    background: rgb(35, 48, 57);
+    color: #fff;
+    height: 40px;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: rgb(114, 130, 141);
   }
 
   input:focus, textarea:focus, select:focus {
     outline: none;
-    border-color: #764ba2;
-    box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.15);
-    background: #fff;
+    box-shadow: 0 0 0 2px rgba(247, 72, 177, 0.4);
+    background: rgb(35, 48, 57);
   }
 
-  textarea { resize: vertical; min-height: 80px; }
+  textarea {
+    resize: vertical;
+    min-height: 60px;
+    height: 120px;
+    padding: 0.5rem 0.75rem;
+  }
+
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2372828d' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 2rem;
+  }
+
+  select option {
+    background: rgb(35, 48, 57);
+    color: #fff;
+  }
 
   .radio-group, .checkbox-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.75rem;
   }
 
   .radio-group label, .checkbox-group label {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0.9rem;
-    border: 1.5px solid #e2e2e2;
+    gap: 0;
+    padding: 0.75rem 1rem;
+    border: none;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.15s;
-    background: #fafafa;
+    font-size: 0.875rem;
+    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1), background 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgb(35, 48, 57);
+    color: rgb(188, 201, 211);
     user-select: none;
+    height: 44px;
   }
 
   .radio-group label:hover, .checkbox-group label:hover {
-    border-color: #764ba2;
-    background: #f9f5fc;
+    background: rgb(45, 58, 67);
+  }
+
+  .radio-group input, .checkbox-group input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
   }
 
   .radio-group input:checked + span,
   .checkbox-group input:checked + span {
-    color: #764ba2;
-    font-weight: 600;
+    color: rgb(247, 72, 177);
+    font-weight: 400;
   }
 
   .radio-group label:has(input:checked),
   .checkbox-group label:has(input:checked) {
-    border-color: #764ba2;
-    background: #f3ecf8;
-  }
-
-  .radio-group input, .checkbox-group input {
-    accent-color: #764ba2;
+    background: #fff;
+    color: rgb(247, 72, 177);
   }
 
   .age-row {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem 0;
   }
 
-  .age-row .field { flex: 1; }
+  .age-row .field {
+    flex: 1;
+    padding: 0;
+  }
+
+  .age-row .field:last-child {
+    padding-bottom: 0;
+  }
 
   .submit-btn {
     display: block;
     width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
+    padding: 0 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: rgb(255, 44, 171);
     border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 600;
+    border-radius: 9999px;
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+    height: 48px;
     letter-spacing: 0.3px;
+    margin-bottom: 2rem;
   }
 
   .submit-btn:hover {
+    opacity: 0.9;
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(118, 75, 162, 0.4);
   }
 
   .submit-btn:active { transform: translateY(0); }
 
   .error-banner {
-    background: #fed7d7;
-    border: 1px solid #feb2b2;
-    color: #c53030;
+    background: rgba(229, 62, 62, 0.15);
+    border: 1px solid rgba(229, 62, 62, 0.3);
+    color: #ff8a8a;
     padding: 1rem 1.2rem;
-    border-radius: 10px;
+    border-radius: 16px;
     margin-bottom: 1.5rem;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     line-height: 1.5;
   }
 
+  .error-banner strong { color: #ff8a8a; }
   .error-banner ul { margin: 0.3rem 0 0 1.2rem; }
-
-  .success-banner {
-    background: #c6f6d5;
-    border: 1px solid #9ae6b4;
-    color: #276749;
-    padding: 1.5rem;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 1.05rem;
-  }
 
   .file-input-wrap {
     position: relative;
@@ -241,29 +277,31 @@ FORM_HTML = """<!DOCTYPE html>
 
   input[type="file"] {
     width: 100%;
-    padding: 0.7rem;
-    border: 1.5px dashed #ccc;
-    border-radius: 10px;
-    background: #fafafa;
+    padding: 0.75rem;
+    border: 2px dashed rgb(55, 68, 77);
+    border-radius: 12px;
+    background: transparent;
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    color: rgb(188, 201, 211);
+    height: auto;
   }
 
   input[type="file"]:focus {
-    border-color: #764ba2;
+    border-color: rgb(247, 72, 177);
     outline: none;
   }
 
   .footer {
     text-align: center;
-    margin-top: 1.5rem;
-    color: rgba(255,255,255,0.6);
-    font-size: 0.85rem;
+    padding-bottom: 2rem;
+    color: rgba(255,255,255,0.4);
+    font-size: 0.8rem;
   }
 
   .field-error {
-    color: #e53e3e;
+    color: rgb(255, 138, 138);
     font-size: 0.82rem;
     margin-top: 0.3rem;
     display: none;
@@ -274,25 +312,133 @@ FORM_HTML = """<!DOCTYPE html>
   .field.has-error input,
   .field.has-error textarea,
   .field.has-error select {
-    border-color: #e53e3e;
+    box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.4);
   }
 
   .field.has-error input:focus,
   .field.has-error textarea:focus,
   .field.has-error select:focus {
-    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15);
+    box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.6);
   }
 
   .field.valid input,
   .field.valid textarea,
   .field.valid select {
-    border-color: #38a169;
+    box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.3);
   }
 
   .field.valid input:focus,
   .field.valid textarea:focus,
   .field.valid select:focus {
-    box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.15);
+    box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.5);
+  }
+
+  /* Smooth scroll */
+  html { scroll-behavior: smooth; }
+
+  /* Date input color fix */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.6);
+  }
+
+  /* Photo upload grid */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .photo-slot {
+    aspect-ratio: 1/1;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .photo-slot-add {
+    background: rgb(35, 48, 57);
+    border: 2px dashed rgb(55, 68, 77);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .photo-slot-add:hover, .photo-slot-add:focus {
+    border-color: rgb(114, 130, 141);
+    background: rgb(40, 53, 62);
+    outline: none;
+  }
+
+  .photo-slot-label {
+    font-size: 0.75rem;
+    color: rgb(114, 130, 141);
+  }
+
+  .photo-slot-filled {
+    background: rgb(35, 48, 57);
+    border: none;
+  }
+
+  .photo-slot-filled img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .photo-slot-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.6);
+    border: none;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+    line-height: 1;
+  }
+
+  .photo-slot-remove:hover {
+    background: rgba(229, 62, 62, 0.8);
+  }
+
+  .photo-dropzone {
+    border: 2px dashed rgb(55, 68, 77);
+    border-radius: 16px;
+    padding: 2rem 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .photo-dropzone.drag-over {
+    border-color: rgb(247, 72, 177);
+    background: rgba(247, 72, 177, 0.05);
+  }
+
+  .dropzone-text {
+    color: rgb(188, 201, 211);
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .dropzone-subtext {
+    color: rgb(114, 130, 141);
+    font-size: 0.8rem;
   }
 </style>
 </head>
@@ -433,9 +579,24 @@ FORM_HTML = """<!DOCTYPE html>
     <h2>Show us your vibe</h2>
 
     <div class="field" id="field-photos">
-      <label class="field-label required" for="photos">Upload your photos</label>
+      <label class="field-label required">Upload your photos</label>
       <p class="helper">Add up to 3 pics that show your face and vibe. Clear face photos from different moments help find better matches for you. (Max 10 MB each)</p>
-      <input type="file" id="photos" name="photos" accept="image/*" multiple required>
+      <input type="file" id="photos" name="photos" accept="image/*" multiple required style="display:none">
+      <div class="photo-grid" id="photoGrid">
+        <div class="photo-slot photo-slot-add" id="addPhotoSlot" tabindex="0" role="button" aria-label="Add photos">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgb(114,130,141)" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span class="photo-slot-label">Add photo</span>
+        </div>
+      </div>
+      <div class="photo-dropzone" id="photoDropzone">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgb(114,130,141)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <span class="dropzone-text">Drag & drop your photos here</span>
+        <span class="dropzone-subtext">or click the + above to browse</span>
+      </div>
       <p class="field-error" id="err-photos"></p>
     </div>
   </div>
@@ -444,7 +605,7 @@ FORM_HTML = """<!DOCTYPE html>
 
   </form>
 
-  <div class="footer">JustDateLah &mdash; Singapore</div>
+  <div class="footer">JustDateLah &bull; Singapore</div>
 </div>
 
 <script>
@@ -586,19 +747,91 @@ FORM_HTML = """<!DOCTYPE html>
     });
   });
 
-  // --- Photos ---
-  document.getElementById('photos').addEventListener('change', function() {
-    const files = this.files;
-    if (files.length === 0) { clearNeutral('photos'); return; }
-    if (files.length > 3) { showError('photos', 'Maximum 3 photos allowed.'); return; }
-    for (let i = 0; i < files.length; i++) {
-      if (files[i].size > 10 * 1024 * 1024) {
-        showError('photos', 'Each photo must be under 10 MB (' + files[i].name + ' is too large).');
+  // --- Photos (drag-and-drop grid) ---
+  var photoFiles = [];
+  var photoInput = document.getElementById('photos');
+  var photoGrid = document.getElementById('photoGrid');
+  var addSlot = document.getElementById('addPhotoSlot');
+  var dropzone = document.getElementById('photoDropzone');
+
+  function updatePhotoGrid() {
+    // Remove old filled slots
+    photoGrid.querySelectorAll('.photo-slot-filled').forEach(function(el) { el.remove(); });
+    // Create previews
+    photoFiles.forEach(function(file, idx) {
+      var slot = document.createElement('div');
+      slot.className = 'photo-slot photo-slot-filled';
+      var img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      img.alt = file.name;
+      slot.appendChild(img);
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'photo-slot-remove';
+      btn.innerHTML = '&times;';
+      btn.setAttribute('aria-label', 'Remove photo');
+      btn.addEventListener('click', function() {
+        photoFiles.splice(idx, 1);
+        syncFilesToInput();
+        updatePhotoGrid();
+        validatePhotos();
+      });
+      slot.appendChild(btn);
+      photoGrid.insertBefore(slot, addSlot);
+    });
+    // Hide add button if 3 photos
+    addSlot.style.display = photoFiles.length >= 3 ? 'none' : '';
+    // Hide dropzone if has photos
+    dropzone.style.display = photoFiles.length > 0 ? 'none' : '';
+  }
+
+  function syncFilesToInput() {
+    var dt = new DataTransfer();
+    photoFiles.forEach(function(f) { dt.items.add(f); });
+    photoInput.files = dt.files;
+  }
+
+  function addPhotos(files) {
+    for (var i = 0; i < files.length; i++) {
+      if (photoFiles.length >= 3) break;
+      if (files[i].type.startsWith('image/')) {
+        photoFiles.push(files[i]);
+      }
+    }
+    syncFilesToInput();
+    updatePhotoGrid();
+    validatePhotos();
+  }
+
+  function validatePhotos() {
+    if (photoFiles.length === 0) { clearNeutral('photos'); return; }
+    if (photoFiles.length > 3) { showError('photos', 'Maximum 3 photos allowed.'); return; }
+    for (var i = 0; i < photoFiles.length; i++) {
+      if (photoFiles[i].size > 10 * 1024 * 1024) {
+        showError('photos', 'Each photo must be under 10 MB (' + photoFiles[i].name + ' is too large).');
         return;
       }
     }
     clearError('photos');
+  }
+
+  addSlot.addEventListener('click', function() { photoInput.click(); });
+  addSlot.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); photoInput.click(); } });
+
+  photoInput.addEventListener('change', function() {
+    addPhotos(this.files);
   });
+
+  // Drag and drop on dropzone
+  dropzone.addEventListener('dragover', function(e) { e.preventDefault(); dropzone.classList.add('drag-over'); });
+  dropzone.addEventListener('dragleave', function() { dropzone.classList.remove('drag-over'); });
+  dropzone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dropzone.classList.remove('drag-over');
+    addPhotos(e.dataTransfer.files);
+  });
+  // Also allow clicking the dropzone
+  dropzone.addEventListener('click', function() { photoInput.click(); });
 
   // --- Submit: final check for untouched fields ---
   document.getElementById('mainForm').addEventListener('submit', function(e) {
@@ -635,9 +868,8 @@ FORM_HTML = """<!DOCTYPE html>
 
     check('attracted_ethnicity', document.querySelectorAll('input[name="attracted_ethnicity"]:checked').length === 0, 'Please select at least one option.');
 
-    const files = document.getElementById('photos').files;
-    check('photos', files.length === 0, 'Please upload at least 1 photo.');
-    if (files.length > 3) { showError('photos', 'Maximum 3 photos.'); hasError = true; }
+    check('photos', photoFiles.length === 0, 'Please upload at least 1 photo.');
+    if (photoFiles.length > 3) { showError('photos', 'Maximum 3 photos.'); hasError = true; }
 
     if (hasError) {
       e.preventDefault();
@@ -927,33 +1159,36 @@ async def submit_form(request: Request):
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Inter', Helvetica, Arial, sans-serif;
+    background: rgb(35, 48, 57);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 2rem;
+    color: #fff;
   }
   .card {
-    background: #fff;
-    border-radius: 16px;
+    background: rgba(8, 23, 33, 0.9);
+    border-radius: 24px;
     padding: 3rem;
-    max-width: 500px;
+    max-width: 480px;
     text-align: center;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    box-shadow: rgb(1, 30, 44) 0px 0px 3px;
   }
-  .card h1 { color: #764ba2; margin-bottom: 1rem; }
-  .card p { color: #555; line-height: 1.6; margin-bottom: 1.5rem; }
+  .card h1 { color: #fff; margin-bottom: 1rem; }
+  .card p { color: rgb(114, 130, 141); line-height: 1.6; margin-bottom: 1.5rem; }
   a {
     display: inline-block;
-    padding: 0.7rem 2rem;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
+    padding: 0.75rem 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    color: rgb(255, 44, 171);
     text-decoration: none;
-    border-radius: 10px;
-    font-weight: 600;
+    border-radius: 9999px;
+    font-weight: 700;
+    transition: opacity 0.2s ease;
   }
+  a:hover { opacity: 0.9; }
 </style>
 </head>
 <body>
