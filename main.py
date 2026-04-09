@@ -1,6 +1,8 @@
 import json
 import logging
 import os
+import re
+import uuid
 from datetime import date, datetime
 
 from fastapi import FastAPI, Request, UploadFile
@@ -199,7 +201,9 @@ async def submit_form(request: Request):
         for p in valid_photos:
             await p.seek(0)
             content = await p.read()
-            path = f"{telegram_id or 'anon'}/{p.filename}"
+            ext = os.path.splitext(p.filename or "photo.jpg")[1] or ".jpg"
+            safe_name = f"{uuid.uuid4().hex}{ext}"
+            path = f"{telegram_id or 'anon'}/{safe_name}"
             supabase.storage.from_("photos").upload(
                 path, content, {"content-type": p.content_type or "image/jpeg", "upsert": "true"}
             )
