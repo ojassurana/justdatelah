@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, DragEvent } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import "./form.css";
 
@@ -45,6 +46,8 @@ function fieldClass(state: FieldState) {
 }
 
 export default function FormPage() {
+  const searchParams = useSearchParams();
+  const telegramId = searchParams.get("tg") || "";
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [serverErrors, setServerErrors] = useState<string[]>([]);
@@ -209,6 +212,7 @@ export default function FormPage() {
     setServerErrors([]);
 
     const formData = new FormData();
+    formData.append("telegram_id", telegramId);
     formData.append("name", name.trim());
     formData.append("birthday", birthday);
     formData.append("gender", gender);
@@ -251,7 +255,7 @@ export default function FormPage() {
         <div className="success-card">
           <h1>You&apos;re in!</h1>
           <p>Thanks for signing up for JustDateLah. We&apos;ll find you a great match soon!</p>
-          <Link href="/form" onClick={() => setSubmitted(false)}>Submit another response</Link>
+          <Link href={`/onboard${telegramId ? `?tg=${telegramId}` : ""}`} onClick={() => setSubmitted(false)}>Update my profile</Link>
         </div>
       </div>
     );
