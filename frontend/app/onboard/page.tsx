@@ -55,7 +55,7 @@ function fieldClass(state: FieldState) {
 
 function OnboardForm() {
   const searchParams = useSearchParams();
-  const telegramId = searchParams.get("tg") || "";
+  const token = searchParams.get("token") || "";
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [serverErrors, setServerErrors] = useState<string[]>([]);
@@ -220,7 +220,7 @@ function OnboardForm() {
     setServerErrors([]);
 
     const formData = new FormData();
-    formData.append("telegram_id", telegramId);
+    formData.append("token", token);
     formData.append("name", name.trim());
     formData.append("birthday", birthday);
     formData.append("gender", gender);
@@ -267,7 +267,7 @@ function OnboardForm() {
         <div className="success-card">
           <h1>You&apos;re in!</h1>
           <p>Thanks for signing up for JustDateLah. We&apos;ll find you a great match soon!</p>
-          <Link href={`/onboard${telegramId ? `?tg=${telegramId}` : ""}`} onClick={() => setSubmitted(false)}>Update my profile</Link>
+          <Link href={`/onboard${token ? `?token=${token}` : ""}`} onClick={() => setSubmitted(false)}>Update my profile</Link>
         </div>
       </div>
     );

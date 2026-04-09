@@ -47,19 +47,19 @@ export default function ProfilePage() {
 
 function ProfileContent() {
   const searchParams = useSearchParams();
-  const telegramId = searchParams.get("tg") || "";
+  const token = searchParams.get("token") || "";
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!telegramId) {
+    if (!token) {
       setError("No profile ID provided.");
       setLoading(false);
       return;
     }
 
-    fetch(`${API_URL}/api/profile/${telegramId}`, {
+    fetch(`${API_URL}/api/profile/${token}`, {
         headers: { "ngrok-skip-browser-warning": "true" },
       })
       .then(res => {
@@ -69,7 +69,7 @@ function ProfileContent() {
       .then(data => setProfile(data))
       .catch(() => setError("Profile not found."))
       .finally(() => setLoading(false));
-  }, [telegramId]);
+  }, [token]);
 
   if (loading) {
     return <div className="profile-loading">Loading profile...</div>;

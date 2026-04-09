@@ -84,7 +84,14 @@ async def submit_form(request: Request):
     errors = []
 
     # --- Extract fields ---
-    telegram_id = form.get("telegram_id", "").strip()
+    token = form.get("token", "").strip()
+    telegram_id = ""
+
+    # Resolve token to telegram_id
+    if token and supabase:
+        result = supabase.table("profiles").select("telegram_id").eq("token", token).execute()
+        if result.data:
+            telegram_id = result.data[0].get("telegram_id") or ""
     name = form.get("name", "").strip()
     birthday = form.get("birthday", "").strip()
     gender = form.get("gender", "")
@@ -248,28 +255,39 @@ async def submit_form(request: Request):
 
     # --- Send Telegram confirmation ---
     if telegram_id and TELEGRAM_BOT_TOKEN:
-        profile_url = f"{FRONTEND_URL}/profile?tg={telegram_id}"
-        try:
-            await send_telegram_message(int(telegram_id), (
-                f"you're all set, {name}! 🎉\n\n"
-                f"your profile is live — type /profile to check it out 👇\n"
-                f"<a href=\"{profile_url}\">View my profile</a>"
-            ))
-        except Exception as e:
-            logger.warning(f"Failed to send Telegram confirmation: {e}")
+        # Fetch the token for this profile
+        profile_token = token
+        if not profile_token and supabase:
+            res = supabase.table("profiles").select("token").eq("telegram_id", telegram_id).execute()
+            if res.data:
+                profile_token = res.data[0].get("token", "")
+        if profile_token:
+            profile_url = f"{FRONTEND_URL}/profile?token={profile_token}"
+            try:
+                await send_telegram_message(int(telegram_id), (
+                    f"you're all set, {name}! 🎉\n\n"
+                    f"your profile is live — type /profile to check it out 👇\n"
+                    f"<a href=\"{profile_url}\">View my profile</a>"
+                ))
+            except Exception as e:
+                logger.warning(f"Failed to send Telegram confirmation: {e}")
 
     return {"success": True, "message": "Thanks for signing up for JustDateLah!"}
 
 
-@app.get("/api/profile/{telegram_id}")
-def get_profile(telegram_id: str):
-    """Get a profile by Telegram ID."""
+@app.get("/api/profile/{token}")
+def get_profile(token: str):
+    """Get a profile by its secret token."""
     if not supabase:
         return JSONResponse(status_code=503, content={"error": "Database not configured"})
-    result = supabase.table("profiles").select("*").eq("telegram_id", telegram_id).execute()
+    result = supabase.table("profiles").select("*").eq("token", token).execute()
     if not result.data:
         return JSONResponse(status_code=404, content={"error": "Profile not found"})
-    return result.data[0]
+    # Don't expose telegram_id in the response
+    profile = result.data[0]
+    profile.pop("telegram_id", None)
+    profile.pop("token", None)
+    return profile
 
 
 # ============================================================
@@ -315,14 +333,20 @@ async def telegram_webhook(request: Request):
 
     elif text == "/profile":
         # Check if profile exists
-        has_profile = False
+        profile_row = None
         if supabase:
-            result = supabase.table("profiles").select("id,name").eq("telegram_id", user_id).execute()
-            has_profile = bool(result.data)
+            result = supabase.table("profiles").select("id,name,token").eq("telegram_id", user_id).execute()
+            if result.data:
+                profile_row = result.data[0]
 
-        if has_profile:
-            profile_url = f"{FRONTEND_URL}/profile?tg={user_id}"
-            onboard_url = f"{FRONTEND_URL}/onboard?tg={user_id}"
+        if profile_row:
+            token = profile_row.get("token") or ""
+            if not token:
+                # Generate token for legacy profiles
+                token = uuid.uuid4().hex
+                supabase.table("profiles").update({"token": token}).eq("telegram_id", user_id).execute()
+            profile_url = f"{FRONTEND_URL}/profile?token={token}"
+            onboard_url = f"{FRONTEND_URL}/onboard?token={token}"
             await send_telegram_message(chat_id, (
                 f"here's your profile, {first_name}:\n\n"
                 f"👤 <a href=\"{profile_url}\">View my profile</a>\n\n"
@@ -330,7 +354,28 @@ async def telegram_webhook(request: Request):
                 f"<a href=\"{onboard_url}\">Edit my profile</a>"
             ))
         else:
-            onboard_url = f"{FRONTEND_URL}/onboard?tg={user_id}"
+            # Generate a token for the new user upfront
+            token = uuid.uuid4().hex
+            # Create a placeholder row so the token is reserved
+            supabase.table("profiles").insert({
+                "telegram_id": user_id,
+                "token": token,
+                "name": first_name,
+                "birthday": "2000-01-01",
+                "gender": "Male",
+                "ethnicity": [],
+                "height_cm": 170,
+                "hobbies": "",
+                "year": "Freshman",
+                "match_intro": "",
+                "looking_for": [],
+                "date_who": [],
+                "min_age": 18,
+                "max_age": 30,
+                "attracted_ethnicity": [],
+                "photos": [],
+            }).execute()
+            onboard_url = f"{FRONTEND_URL}/onboard?token={token}"
             await send_telegram_message(chat_id, (
                 f"you haven't set up your profile yet!\n\n"
                 f"tap below to get started 👇\n"
