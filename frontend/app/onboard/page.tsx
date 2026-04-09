@@ -266,8 +266,10 @@ function OnboardForm() {
       <div className="success-container">
         <div className="success-card">
           <h1>You&apos;re in!</h1>
-          <p>Thanks for signing up for JustDateLah. We&apos;ll find you a great match soon!</p>
-          <Link href={`/onboard${token ? `?token=${token}` : ""}`} onClick={() => setSubmitted(false)}>Update my profile</Link>
+          <p>Thanks for signing up for JustDateLah. Your match will be delivered every <strong>Wednesday at 9 PM</strong> via Telegram.</p>
+          <p style={{ marginBottom: "1.5rem" }}>Head back to the bot and stay tuned!</p>
+          <a href="https://t.me/justdatelah_bot" style={{ marginBottom: "0.75rem" }}>Back to Telegram</a>
+          <Link href={`/onboard${token ? `?token=${token}` : ""}`} onClick={() => setSubmitted(false)} style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.2)", color: "rgb(188, 201, 211)" }}>Update my profile</Link>
         </div>
       </div>
     );
