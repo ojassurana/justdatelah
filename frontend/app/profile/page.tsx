@@ -86,30 +86,39 @@ function ProfileContent() {
 
   const age = calculateAge(profile.birthday);
 
+  const photoCount = profile.photos.length;
+
   return (
     <div className="profile-container">
-      {/* Photos */}
-      {profile.photos.length > 0 && (
-        <div className={`profile-photos${profile.photos.length === 1 ? " single-photo" : ""}`}>
+      {/* Hero photos */}
+      {photoCount === 1 && (
+        <div className="profile-hero">
+          <img src={profile.photos[0]} alt={profile.name} style={{ width: "100%", aspectRatio: "3/4", objectFit: "cover" }} />
+        </div>
+      )}
+      {photoCount >= 2 && (
+        <div className={`profile-photos-grid ${photoCount === 2 ? "two-photos" : "three-photos"}`}>
           {profile.photos.map((url, i) => (
             <img key={i} src={url} alt={`${profile.name} photo ${i + 1}`} />
           ))}
         </div>
       )}
 
-      {/* Header */}
-      <div className="profile-header">
-        <h1>{profile.name}</h1>
-        <p className="age-gender">{age} &bull; {profile.gender} &bull; {profile.height_cm}cm</p>
+      {/* Header overlapping photos */}
+      <div className="profile-info-card">
+        <div className="profile-header liquid-glass-strong">
+          <h1>{profile.name}</h1>
+          <p className="age-gender">{age} &bull; {profile.gender} &bull; {profile.height_cm}cm</p>
+        </div>
       </div>
 
       {/* Match intro quote */}
-      <div className="profile-match-intro">
+      <div className="profile-match-intro liquid-glass">
         {profile.match_intro}
       </div>
 
       {/* About */}
-      <div className="profile-card">
+      <div className="profile-card liquid-glass">
         <h2>About</h2>
         <div className="profile-stat">
           <span className="label">Year</span>
@@ -126,13 +135,13 @@ function ProfileContent() {
       </div>
 
       {/* Hobbies */}
-      <div className="profile-card">
+      <div className="profile-card liquid-glass">
         <h2>Hobbies &amp; Interests</h2>
         <p>{profile.hobbies}</p>
       </div>
 
       {/* Looking for */}
-      <div className="profile-card">
+      <div className="profile-card liquid-glass">
         <h2>Looking for</h2>
         <div className="profile-tags">
           {profile.looking_for.map(item => (
@@ -142,7 +151,7 @@ function ProfileContent() {
       </div>
 
       {/* Dating preferences */}
-      <div className="profile-card">
+      <div className="profile-card liquid-glass">
         <h2>Dating Preferences</h2>
         <div className="profile-stat">
           <span className="label">Interested in</span>
@@ -160,7 +169,7 @@ function ProfileContent() {
 
       {/* Physical preferences */}
       {(profile.attractive_height_build || profile.attractive_facial_features || profile.attractive_energy_vibes) && (
-        <div className="profile-card">
+        <div className="profile-card liquid-glass">
           <h2>What I find attractive</h2>
           {profile.attractive_height_build && (
             <div className="profile-stat">

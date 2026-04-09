@@ -339,7 +339,7 @@ async def telegram_webhook(request: Request):
         # Check if profile exists
         profile_row = None
         if supabase:
-            result = supabase.table("profiles").select("id,name,token").eq("telegram_id", user_id).execute()
+            result = supabase.table("profiles").select("id,name,token,match_intro").eq("telegram_id", user_id).execute()
             if result.data:
                 profile_row = result.data[0]
 
@@ -349,15 +349,24 @@ async def telegram_webhook(request: Request):
                 # Generate token for legacy profiles
                 token = uuid.uuid4().hex
                 supabase.table("profiles").update({"token": token}).eq("telegram_id", user_id).execute()
-            profile_url = f"{FRONTEND_URL}/profile?token={token}"
-            onboard_url = f"{FRONTEND_URL}/onboard?token={token}"
-            await send_telegram_message(chat_id,
-                f"here's your profile, {first_name} 👤",
-                buttons=[
-                    {"text": "View my profile", "url": profile_url},
-                    {"text": "Edit my profile", "url": onboard_url},
-                ],
-            )
+
+            is_complete = bool(profile_row.get("match_intro"))
+            if is_complete:
+                profile_url = f"{FRONTEND_URL}/profile?token={token}"
+                onboard_url = f"{FRONTEND_URL}/onboard?token={token}"
+                await send_telegram_message(chat_id,
+                    f"here's your profile, {first_name} 👤",
+                    buttons=[
+                        {"text": "View my profile", "url": profile_url},
+                        {"text": "Edit my profile", "url": onboard_url},
+                    ],
+                )
+            else:
+                onboard_url = f"{FRONTEND_URL}/onboard?token={token}"
+                await send_telegram_message(chat_id,
+                    "looks like you started but haven't finished your profile yet!\n\ntap below to complete it 👇",
+                    buttons=[{"text": "Complete my profile", "url": onboard_url}],
+                )
         else:
             # Generate a token for the new user upfront
             token = uuid.uuid4().hex
