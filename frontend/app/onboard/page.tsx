@@ -1,11 +1,19 @@
 "use client";
 
-import { useState, useRef, useCallback, DragEvent } from "react";
+import { Suspense, useState, useRef, useCallback, DragEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import "./form.css";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+export default function OnboardPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh" }} />}>
+      <OnboardForm />
+    </Suspense>
+  );
+}
 
 const ETHNICITIES = [
   "Chinese", "Malay", "Indian", "Eurasian", "Filipino",
@@ -45,7 +53,7 @@ function fieldClass(state: FieldState) {
   return "field";
 }
 
-export default function FormPage() {
+function OnboardForm() {
   const searchParams = useSearchParams();
   const telegramId = searchParams.get("tg") || "";
   const [submitted, setSubmitted] = useState(false);

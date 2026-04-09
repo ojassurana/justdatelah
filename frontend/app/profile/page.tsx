@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import "./profile.css";
 
@@ -38,6 +38,14 @@ function calculateAge(birthday: string): number {
 }
 
 export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div className="profile-loading">Loading profile...</div>}>
+      <ProfileContent />
+    </Suspense>
+  );
+}
+
+function ProfileContent() {
   const searchParams = useSearchParams();
   const telegramId = searchParams.get("tg") || "";
   const [profile, setProfile] = useState<Profile | null>(null);
