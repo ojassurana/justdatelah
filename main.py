@@ -264,11 +264,10 @@ async def submit_form(request: Request):
         if profile_token:
             profile_url = f"{FRONTEND_URL}/profile?token={profile_token}"
             try:
-                await send_telegram_message(int(telegram_id), (
-                    f"you're all set, {name}! 🎉\n\n"
-                    f"your profile is live — type /profile to check it out 👇\n"
-                    f"<a href=\"{profile_url}\">View my profile</a>"
-                ))
+                await send_telegram_message(int(telegram_id),
+                    f"you're all set, {name}! 🎉\n\nyour profile is live. matches drop every wednesday at 9 PM — stay tuned!",
+                    buttons=[{"text": "View my profile", "url": profile_url}],
+                )
             except Exception as e:
                 logger.warning(f"Failed to send Telegram confirmation: {e}")
 
@@ -296,15 +295,20 @@ def get_profile(token: str):
 
 import httpx
 
-async def send_telegram_message(chat_id: int, text: str, parse_mode: str = "HTML"):
-    """Send a message via Telegram Bot API."""
+async def send_telegram_message(chat_id: int, text: str, parse_mode: str = "HTML", buttons: list[dict] | None = None):
+    """Send a message via Telegram Bot API. buttons is a list of [{"text": "...", "url": "..."}]."""
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    payload: dict = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": parse_mode,
+    }
+    if buttons:
+        payload["reply_markup"] = {
+            "inline_keyboard": [[btn] for btn in buttons]
+        }
     async with httpx.AsyncClient() as client:
-        await client.post(url, json={
-            "chat_id": chat_id,
-            "text": text,
-            "parse_mode": parse_mode,
-        })
+        await client.post(url, json=payload)
 
 
 @app.post("/api/telegram/webhook")
@@ -347,12 +351,13 @@ async def telegram_webhook(request: Request):
                 supabase.table("profiles").update({"token": token}).eq("telegram_id", user_id).execute()
             profile_url = f"{FRONTEND_URL}/profile?token={token}"
             onboard_url = f"{FRONTEND_URL}/onboard?token={token}"
-            await send_telegram_message(chat_id, (
-                f"here's your profile, {first_name}:\n\n"
-                f"👤 <a href=\"{profile_url}\">View my profile</a>\n\n"
-                f"wanna update it? 👇\n"
-                f"<a href=\"{onboard_url}\">Edit my profile</a>"
-            ))
+            await send_telegram_message(chat_id,
+                f"here's your profile, {first_name} 👤",
+                buttons=[
+                    {"text": "View my profile", "url": profile_url},
+                    {"text": "Edit my profile", "url": onboard_url},
+                ],
+            )
         else:
             # Generate a token for the new user upfront
             token = uuid.uuid4().hex
@@ -376,11 +381,10 @@ async def telegram_webhook(request: Request):
                 "photos": [],
             }).execute()
             onboard_url = f"{FRONTEND_URL}/onboard?token={token}"
-            await send_telegram_message(chat_id, (
-                f"you haven't set up your profile yet!\n\n"
-                f"tap below to get started 👇\n"
-                f"<a href=\"{onboard_url}\">Create my profile</a>"
-            ))
+            await send_telegram_message(chat_id,
+                "you haven't set up your profile yet!\n\ntap below to get started 👇",
+                buttons=[{"text": "Create my profile", "url": onboard_url}],
+            )
 
     else:
         await send_telegram_message(chat_id, (
