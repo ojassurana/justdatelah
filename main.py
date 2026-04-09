@@ -1,20 +1,32 @@
 import json
+import logging
 import os
 from datetime import date, datetime
-from typing import Optional
 
-from fastapi import FastAPI, File, Request, UploadFile
+from fastapi import FastAPI, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, field_validator, model_validator
+from supabase import create_client
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+# --- Supabase ---
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY", "")
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABASE_KEY else None
+
+# --- Telegram ---
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://justdatelah-eight.vercel.app")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        os.environ.get("FRONTEND_URL", ""),
+        FRONTEND_URL,
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -47,9 +59,12 @@ YEARS = ["Freshman", "Sophomore", "Junior", "Senior", "Master", "PhD", "Other"]
 MAX_BIRTHDAY = "2008-04-08"
 
 
+# ============================================================
+# API endpoints
+# ============================================================
+
 @app.get("/api/form-options")
 def get_form_options():
-    """Return all form option lists so the frontend can render dropdowns/checkboxes."""
     return {
         "ethnicities": ETHNICITIES,
         "attracted_ethnicities": ATTRACTED_ETHNICITIES,
@@ -67,6 +82,7 @@ async def submit_form(request: Request):
     errors = []
 
     # --- Extract fields ---
+    telegram_id = form.get("telegram_id", "").strip()
     name = form.get("name", "").strip()
     birthday = form.get("birthday", "").strip()
     gender = form.get("gender", "")
@@ -177,8 +193,22 @@ async def submit_form(request: Request):
     if errors:
         return JSONResponse(status_code=422, content={"errors": errors})
 
-    # --- Build submission ---
-    submission = {
+    # --- Upload photos to Supabase Storage ---
+    photo_urls = []
+    if supabase:
+        for p in valid_photos:
+            await p.seek(0)
+            content = await p.read()
+            path = f"{telegram_id or 'anon'}/{p.filename}"
+            supabase.storage.from_("photos").upload(
+                path, content, {"content-type": p.content_type or "image/jpeg", "upsert": "true"}
+            )
+            public_url = supabase.storage.from_("photos").get_public_url(path)
+            photo_urls.append(public_url)
+
+    # --- Store in Supabase ---
+    profile_data = {
+        "telegram_id": telegram_id or None,
         "name": name,
         "birthday": birthday,
         "gender": gender,
@@ -195,16 +225,108 @@ async def submit_form(request: Request):
         "attractive_height_build": attractive_height or None,
         "attractive_facial_features": attractive_face or None,
         "attractive_energy_vibes": attractive_vibe or None,
-        "photos": photo_names,
+        "photos": photo_urls or photo_names,
+        "updated_at": datetime.utcnow().isoformat(),
     }
 
-    print("\n" + "=" * 60)
-    print("NEW SUBMISSION RECEIVED")
-    print("=" * 60)
-    print(json.dumps(submission, indent=2, ensure_ascii=False))
-    print("=" * 60 + "\n")
+    if supabase and telegram_id:
+        # Upsert: update if telegram_id exists, insert if not
+        supabase.table("profiles").upsert(
+            profile_data, on_conflict="telegram_id"
+        ).execute()
+        logger.info(f"Profile saved for telegram_id={telegram_id}")
+    elif supabase:
+        supabase.table("profiles").insert(profile_data).execute()
+        logger.info("Profile saved (no telegram_id)")
+    else:
+        logger.warning("Supabase not configured — profile not saved")
+        print(json.dumps(profile_data, indent=2, ensure_ascii=False))
 
     return {"success": True, "message": "Thanks for signing up for JustDateLah!"}
+
+
+@app.get("/api/profile/{telegram_id}")
+def get_profile(telegram_id: str):
+    """Get a profile by Telegram ID."""
+    if not supabase:
+        return JSONResponse(status_code=503, content={"error": "Database not configured"})
+    result = supabase.table("profiles").select("*").eq("telegram_id", telegram_id).execute()
+    if not result.data:
+        return JSONResponse(status_code=404, content={"error": "Profile not found"})
+    return result.data[0]
+
+
+# ============================================================
+# Telegram webhook
+# ============================================================
+
+import httpx
+
+async def send_telegram_message(chat_id: int, text: str, parse_mode: str = "HTML"):
+    """Send a message via Telegram Bot API."""
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    async with httpx.AsyncClient() as client:
+        await client.post(url, json={
+            "chat_id": chat_id,
+            "text": text,
+            "parse_mode": parse_mode,
+        })
+
+
+@app.post("/api/telegram/webhook")
+async def telegram_webhook(request: Request):
+    """Handle incoming Telegram updates."""
+    if not TELEGRAM_BOT_TOKEN:
+        return {"ok": False, "error": "Bot token not configured"}
+
+    data = await request.json()
+    message = data.get("message")
+    if not message:
+        return {"ok": True}
+
+    chat_id = message["chat"]["id"]
+    user_id = str(message["from"]["id"])
+    text = message.get("text", "").strip()
+    first_name = message["from"].get("first_name", "there")
+
+    if text == "/start":
+        await send_telegram_message(chat_id, (
+            f"hey {first_name}! welcome to <b>JustDateLah</b> 💌\n\n"
+            "we match you with someone great and set up the date — "
+            "no swiping, no awkward DMs.\n\n"
+            "type /profile to get started!"
+        ))
+
+    elif text == "/profile":
+        # Check if profile exists
+        has_profile = False
+        if supabase:
+            result = supabase.table("profiles").select("id,name").eq("telegram_id", user_id).execute()
+            has_profile = bool(result.data)
+
+        if has_profile:
+            profile_url = f"{FRONTEND_URL}/profile?tg={user_id}"
+            onboard_url = f"{FRONTEND_URL}/onboard?tg={user_id}"
+            await send_telegram_message(chat_id, (
+                f"here's your profile, {first_name}:\n\n"
+                f"👤 <a href=\"{profile_url}\">View my profile</a>\n\n"
+                f"wanna update it? 👇\n"
+                f"<a href=\"{onboard_url}\">Edit my profile</a>"
+            ))
+        else:
+            onboard_url = f"{FRONTEND_URL}/onboard?tg={user_id}"
+            await send_telegram_message(chat_id, (
+                f"you haven't set up your profile yet!\n\n"
+                f"tap below to get started 👇\n"
+                f"<a href=\"{onboard_url}\">Create my profile</a>"
+            ))
+
+    else:
+        await send_telegram_message(chat_id, (
+            "hmm i don't know that one — try /profile to view or create your profile!"
+        ))
+
+    return {"ok": True}
 
 
 if __name__ == "__main__":
