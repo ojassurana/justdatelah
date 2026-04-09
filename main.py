@@ -22,7 +22,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABAS
 
 # --- Telegram ---
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://justdatelah-eight.vercel.app")
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://justdatelah.com")
 
 app.add_middleware(
     CORSMiddleware,

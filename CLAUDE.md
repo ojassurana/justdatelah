@@ -89,7 +89,7 @@ Split deployment: Next.js frontend on Vercel, FastAPI backend hosted separately.
 - `requirements.txt` — Python dependencies for the backend
 
 ### Development Setup
-- Frontend: hosted on Vercel (https://justdatelah-eight.vercel.app) — no local frontend server needed
+- Frontend: hosted on Vercel (https://justdatelah.com) — no local frontend server needed
 - Backend: `uvicorn main:app --host 127.0.0.1 --port 8000` on your Mac
 - Vercel env var `NEXT_PUBLIC_API_URL=http://localhost:8000` — the Vercel site calls your local backend
 - Only YOU can use the site during dev (other people's browsers can't reach your localhost)
