@@ -5,8 +5,8 @@
 @plugin "tailwindcss-animate";
 
 @theme inline {
-  --font-family-heading: 'Instrument Serif', serif;
-  --font-family-body: 'Barlow', sans-serif;
+  --font-heading: 'Instrument Serif', serif;
+  --font-body: 'Barlow', sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,12 +14,13 @@
 html, body { overflow-x: hidden; }
 
 body {
-  font-family: 'Inter', Helvetica, Arial, sans-serif;
-  background: rgb(35, 48, 57);
+  font-family: 'Barlow', sans-serif;
+  background: #000;
   min-height: 100vh;
   padding: 0;
   color: #fff;
   -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
 }
 
 html { scroll-behavior: smooth; }
