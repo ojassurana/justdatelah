@@ -240,7 +240,11 @@ function OnboardForm() {
     photos.forEach(p => formData.append("photos", p));
 
     try {
-      const res = await fetch(`${API_URL}/api/submit`, { method: "POST", body: formData });
+      const res = await fetch(`${API_URL}/api/submit`, {
+        method: "POST",
+        body: formData,
+        headers: { "ngrok-skip-browser-warning": "true" },
+      });
       const data = await res.json();
       if (!res.ok) {
         setServerErrors(data.errors || ["Something went wrong."]);

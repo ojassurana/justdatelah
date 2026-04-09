@@ -59,7 +59,9 @@ function ProfileContent() {
       return;
     }
 
-    fetch(`${API_URL}/api/profile/${telegramId}`)
+    fetch(`${API_URL}/api/profile/${telegramId}`, {
+        headers: { "ngrok-skip-browser-warning": "true" },
+      })
       .then(res => {
         if (!res.ok) throw new Error("Profile not found");
         return res.json();
