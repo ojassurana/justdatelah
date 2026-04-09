@@ -242,6 +242,18 @@ async def submit_form(request: Request):
         logger.warning("Supabase not configured — profile not saved")
         print(json.dumps(profile_data, indent=2, ensure_ascii=False))
 
+    # --- Send Telegram confirmation ---
+    if telegram_id and TELEGRAM_BOT_TOKEN:
+        profile_url = f"{FRONTEND_URL}/profile?tg={telegram_id}"
+        try:
+            await send_telegram_message(int(telegram_id), (
+                f"you're all set, {name}! 🎉\n\n"
+                f"your profile is live — type /profile to check it out 👇\n"
+                f"<a href=\"{profile_url}\">View my profile</a>"
+            ))
+        except Exception as e:
+            logger.warning(f"Failed to send Telegram confirmation: {e}")
+
     return {"success": True, "message": "Thanks for signing up for JustDateLah!"}
 
 
