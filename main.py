@@ -24,6 +24,10 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY) if SUPABASE_URL and SUPABAS
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "https://justdatelah.com")
 
+# In-memory conversation state for multi-step flows
+# Maps telegram user_id -> {"step": "awaiting_email", ...}
+user_states: dict[str, dict] = {}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -328,6 +332,70 @@ async def telegram_webhook(request: Request):
     text = message.get("text", "").strip()
     first_name = message["from"].get("first_name", "there")
 
+    # Check if user is in the middle of a conversation flow
+    state = user_states.get(user_id)
+
+    if text.startswith("/"):
+        # Any command cancels the current flow
+        user_states.pop(user_id, None)
+        state = None
+
+    # Handle awaiting email reply
+    if state and state.get("step") == "awaiting_email":
+        email = text.strip().lower()
+        if not email.endswith(".edu") and not email.endswith(".edu.sg"):
+            await send_telegram_message(chat_id,
+                "hmm that doesn't look like a student email 🤔\n\n"
+                "please send your university email (ending in <b>.edu</b> or <b>.edu.sg</b>):"
+            )
+            return {"ok": True}
+
+        # Valid student email — store it and continue with profile flow
+        user_states.pop(user_id, None)
+
+        # Update or create profile with student_email
+        profile_row = None
+        if supabase:
+            result = supabase.table("profiles").select("id,token").eq("telegram_id", user_id).execute()
+            if result.data:
+                profile_row = result.data[0]
+                supabase.table("profiles").update({"student_email": email}).eq("telegram_id", user_id).execute()
+
+        if profile_row:
+            token = profile_row.get("token") or ""
+            if not token:
+                token = uuid.uuid4().hex
+                supabase.table("profiles").update({"token": token}).eq("telegram_id", user_id).execute()
+        else:
+            token = uuid.uuid4().hex
+            supabase.table("profiles").insert({
+                "telegram_id": user_id,
+                "token": token,
+                "name": first_name,
+                "student_email": email,
+                "birthday": "2000-01-01",
+                "gender": "Male",
+                "ethnicity": [],
+                "height_cm": 170,
+                "hobbies": "",
+                "year": "Freshman",
+                "match_intro": "",
+                "looking_for": [],
+                "date_who": [],
+                "min_age": 18,
+                "max_age": 30,
+                "attracted_ethnicity": [],
+                "photos": [],
+            }).execute()
+
+        onboard_url = f"{FRONTEND_URL}/onboard?token={token}"
+        await send_telegram_message(chat_id,
+            f"got it! 📧 <b>{email}</b>\n\n"
+            "now let's set up your profile 👇",
+            buttons=[{"text": "Create my profile", "url": onboard_url}],
+        )
+        return {"ok": True}
+
     if text == "/start":
         await send_telegram_message(chat_id, (
             f"hey {first_name}! welcome to <b>JustDateLah</b> 💌\n\n"
@@ -340,10 +408,21 @@ async def telegram_webhook(request: Request):
         # Check if profile exists
         profile_row = None
         if supabase:
-            result = supabase.table("profiles").select("id,name,token,match_intro").eq("telegram_id", user_id).execute()
+            result = supabase.table("profiles").select("id,name,token,match_intro,student_email").eq("telegram_id", user_id).execute()
             if result.data:
                 profile_row = result.data[0]
 
+        # If no student email on file, ask for it first
+        has_email = profile_row and profile_row.get("student_email")
+        if not has_email:
+            user_states[user_id] = {"step": "awaiting_email"}
+            await send_telegram_message(chat_id,
+                "before we get started, we need to verify you're a student 🎓\n\n"
+                "please send your university email (ending in <b>.edu</b> or <b>.edu.sg</b>):"
+            )
+            return {"ok": True}
+
+        # Student email already on file — normal profile flow
         if profile_row:
             token = profile_row.get("token") or ""
             if not token:
@@ -368,33 +447,6 @@ async def telegram_webhook(request: Request):
                     "looks like you started but haven't finished your profile yet!\n\ntap below to complete it 👇",
                     buttons=[{"text": "Complete my profile", "url": onboard_url}],
                 )
-        else:
-            # Generate a token for the new user upfront
-            token = uuid.uuid4().hex
-            # Create a placeholder row so the token is reserved
-            supabase.table("profiles").insert({
-                "telegram_id": user_id,
-                "token": token,
-                "name": first_name,
-                "birthday": "2000-01-01",
-                "gender": "Male",
-                "ethnicity": [],
-                "height_cm": 170,
-                "hobbies": "",
-                "year": "Freshman",
-                "match_intro": "",
-                "looking_for": [],
-                "date_who": [],
-                "min_age": 18,
-                "max_age": 30,
-                "attracted_ethnicity": [],
-                "photos": [],
-            }).execute()
-            onboard_url = f"{FRONTEND_URL}/onboard?token={token}"
-            await send_telegram_message(chat_id,
-                "you haven't set up your profile yet!\n\ntap below to get started 👇",
-                buttons=[{"text": "Create my profile", "url": onboard_url}],
-            )
 
     else:
         await send_telegram_message(chat_id, (
